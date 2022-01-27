@@ -25,7 +25,7 @@ const {
 const canvas = createCanvas(format.width, format.height);
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = format.smoothing;
-var metadataList = [];
+var metadataList = {};
 var attributesList = [];
 var dnaList = new Set();
 const DNA_DELIMITER = "-";
@@ -167,7 +167,28 @@ const addMetadata = (_dna, _edition) => {
       },
     };
   }
-  metadataList.push(tempMetadata);
+  else if (network == NETWORK.algorand) {
+    // translate the attributes array to a properties object
+    let metaDataProperties = {};
+
+    for (var i = 0; i < attributesList.length; i++) {
+      let attrKey = attributesList[i].trait_type;
+      let attrVal = attributesList[i].value;
+
+      metaDataProperties[attrKey] = attrVal;
+    }
+
+    tempMetadata = {
+      standard: "arc69",
+      mime_type: "image/png",
+      description: description,
+      properties: metaDataProperties
+      // OPTIONAL ARC69 fields
+      // external_url: `${baseUri}/${_edition}.png`,
+      // media_url: `${baseUri}/${_edition}.png`,
+    };
+  }
+  metadataList[_edition] = tempMetadata;
   attributesList = [];
 };
 
@@ -308,7 +329,8 @@ const writeMetaData = (_data) => {
 };
 
 const saveMetaDataSingleFile = (_editionCount) => {
-  let metadata = metadataList.find((meta) => meta.edition == _editionCount);
+  // let metadata = metadataList.find((meta) => meta.edition == _editionCount);
+  let metadata = metadataList[_editionCount];
   debugLogs
     ? console.log(
         `Writing metadata for ${_editionCount}: ${JSON.stringify(metadata)}`

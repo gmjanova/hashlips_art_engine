@@ -2,7 +2,13 @@ const basePath = process.cwd();
 const { MODE } = require(`${basePath}/constants/blend_mode.js`);
 const { NETWORK } = require(`${basePath}/constants/network.js`);
 
-const network = NETWORK.eth;
+// Set the network, options here are:
+// NETWORK.eth - ethereum
+// NETWORK.sol - solana
+// NETWORK.algorand - algorand
+
+// Algorand network
+const network = NETWORK.algorand;
 
 // General metadata for Ethereum
 const namePrefix = "Your Collection";
